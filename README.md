@@ -4,7 +4,7 @@ Java API Wrapper for Official Osu! API
 
 https://github.com/ppy/osu-api/wiki
 
-##OsuPlayer Usage Example | OsuPlayerTest.java
+## OsuPlayer Usage Example | OsuPlayerTest.java
 ```java
 public class OsuPlayerTest {
     public static void main(String[] args) throws IOException, OsuUserException, OsuGamemodeException {
