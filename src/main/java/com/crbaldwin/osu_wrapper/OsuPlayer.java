@@ -3,9 +3,17 @@ package com.crbaldwin.osu_wrapper;
 import com.crbaldwin.osu_wrapper.exceptions.OsuGamemodeException;
 import com.crbaldwin.osu_wrapper.exceptions.OsuUserException;
 import com.crbaldwin.osu_wrapper.util.API_Request;
+import com.crbaldwin.osu_wrapper.events.OsuListener;
+import com.crbaldwin.osu_wrapper.events.RankChangedEvent;
+
 import org.json.JSONObject;
+import org.json.JSONException;
 
 import java.io.IOException;
+import java.lang.Thread;
+import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
 
 public class OsuPlayer {
 
@@ -16,14 +24,29 @@ public class OsuPlayer {
 
     //Osu User Variables
     private String username, country, profile_url, avatar_url, uname, key;
-    private int user_id, pp_rank, pp_country_rank, playcount, count300, count100, count50, count_rank_ss, count_rank_s, count_rank_a, user_ID;
-    private double pp_raw, accuracy, level;
+    private int user_id, pp_rank, pp_country_rank, playcount, count300, count100, count50, count_rank_ss, count_rank_s, count_rank_a, user_ID, rank_difference;
+    private double pp_raw, accuracy, level, pp_difference;
     private long ranked_score, total_score;
     private Osu.OsuGameMode gmode;
+    private long last_checked;
+    private List<OsuListener> listeners = new ArrayList<OsuListener>();
+    private Thread thread;
 
 
 
-    OsuPlayer(String API_KEY, String name, Osu.OsuGameMode gameMode) throws OsuUserException, IOException, OsuGamemodeException {
+    /* Work on PPEventListener
+     *  > Store Listeners
+     *    ? 1 Listener per user / Store in listener OsuPlayer
+     *    ? List of all listeners in Osu.java
+     * 
+     *  > Refresh rate of listeners
+     *    ? 15 Seconds
+     *    ? 30 Seconds
+     *    ? 1 Minute
+     *    ? 5 Minutes
+     */
+    
+    OsuPlayer(String API_KEY, String name, Osu.OsuGameMode gameMode) throws OsuUserException, IOException, OsuGamemodeException, JSONException {
         //Setting necessary instance variables to call API in update().
         uname = name;
         user_ID = 0;
@@ -32,7 +55,7 @@ public class OsuPlayer {
         updateUser();
     }
 
-    OsuPlayer(String API_KEY, int userID, Osu.OsuGameMode gameMode) throws OsuUserException, IOException, OsuGamemodeException {
+    OsuPlayer(String API_KEY, int userID, Osu.OsuGameMode gameMode) throws OsuUserException, IOException, OsuGamemodeException, JSONException {
         //Setting necessary instance variables to call API in update().
         user_ID = userID;
         gmode = gameMode;
@@ -40,12 +63,63 @@ public class OsuPlayer {
         updateUser();
     }
 
-
+    private synchronized void check(OsuPlayer p, double PP_Required) throws JSONException, IOException, OsuGamemodeException, OsuUserException {
+      if((new Date().getTime() - last_checked) / 1000 >= 2) {
+        updateUser();
+        if(pp_difference > PP_Required) {
+          RankChangedEvent event = new RankChangedEvent(p);
+          for(OsuListener list : listeners) {
+            //
+          }
+        }
+        if(rank_difference != pp_rank) {
+          RankChangedEvent event = new RankChangedEvent(p);
+          for(OsuListener list : listeners) {
+            list.onPlayerRankChanged(event);
+          }
+        }
+      }
+    }
+    
+    public void addListener(OsuListener listener, double PP_Required) {
+      listeners.add(listener);
+      final OsuPlayer user = this;
+      final double pp_req = PP_Required;
+      
+      if(thread == null) {
+        thread = new Thread() {
+          @Override
+          public void run() {
+            while (true) {
+              try {
+                check(user, pp_req);
+                System.out.println(user.getUsername() + " running...");
+              } catch (JSONException ex) {
+                ex.printStackTrace();
+              } catch (IOException ex) {
+                ex.printStackTrace();
+              } catch (OsuGamemodeException ex) {
+                ex.printStackTrace();
+              } catch (OsuUserException ex) {
+                ex.printStackTrace();
+              }
+              try {
+                Thread.sleep(1000);
+              } catch (Exception ex) {
+                ex.printStackTrace();
+              }
+            }
+          }
+        };
+        thread.start();
+      }
+    }
+    
     /*
     Check if user has played mode, and iterate what they have done for gamemode
     Line.69-85
      */
-    private void updateUser() throws IOException, OsuGamemodeException, OsuUserException {
+    private void updateUser() throws IOException, OsuGamemodeException, OsuUserException, JSONException {
         JSONObject user;
         if(gmode == Osu.OsuGameMode.OSU) {
             user = REQUEST.callApi(GET_USER + key + "&u=" + (user_ID == 0 ? uname : user_ID) + "&m=0");
@@ -83,14 +157,42 @@ public class OsuPlayer {
             count_rank_a = user.getInt("count_rank_a");
             country = user.getString("country");
             pp_country_rank = user.getInt("pp_country_rank");
-
+            
+            if(pp_difference == 0.0d) 
+              pp_difference = pp_raw;
+            else 
+              pp_difference = pp_raw - pp_difference;
+            
+            if(rank_difference == 0)
+              rank_difference = pp_rank;
+            else
+              rank_difference = pp_rank - rank_difference;
+            
             profile_url = "https://osu.ppy.sh/u/" + user_id;
             avatar_url = "https://a.ppy.sh/" + user_id;
+            
+            last_checked = new Date().getTime();
         }
     }
 
 
     //Accessor Methods
+    public void setRaw_PP(double pp) {
+      pp_raw = pp;
+    }
+    
+    public double getPPDiff() {
+      return pp_difference;
+    }
+    
+    public int getRankDiff() {
+      return rank_difference;
+    }
+    
+    public long getChecked() {
+         return last_checked;
+    }
+    
     public int getUserID() {
         return user_id;
     }

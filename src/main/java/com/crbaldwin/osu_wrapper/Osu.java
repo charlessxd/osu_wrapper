@@ -4,6 +4,7 @@ import com.crbaldwin.osu_wrapper.exceptions.OsuGamemodeException;
 import com.crbaldwin.osu_wrapper.exceptions.OsuUserException;
 import com.crbaldwin.osu_wrapper.util.API_Request;
 import org.json.JSONObject;
+import org.json.JSONException;
 
 import java.io.IOException;
 
@@ -22,12 +23,12 @@ public class Osu {
     }
 
     //Default call, returns OsuPlayer for
-    public OsuPlayer getPlayer(String username, OsuGameMode mode) throws IOException, OsuUserException, OsuGamemodeException {
+    public OsuPlayer getPlayer(String username, OsuGameMode mode) throws IOException, OsuUserException, OsuGamemodeException, JSONException {
         OsuPlayer player = new OsuPlayer(key, username, mode);
         return player;
     }
 
-    public OsuPlayer getPlayer(int user_id, OsuGameMode mode) throws OsuUserException, IOException, OsuGamemodeException {
+    public OsuPlayer getPlayer(int user_id, OsuGameMode mode) throws OsuUserException, IOException, OsuGamemodeException, JSONException {
         OsuPlayer player = new OsuPlayer(key, user_id, mode);
         return player;
     }
