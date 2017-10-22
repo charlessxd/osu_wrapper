@@ -63,9 +63,12 @@ public class OsuPlayer {
         updateUser();
     }
 
-    private synchronized void check(OsuPlayer p, double PP_Required) throws JSONException, IOException, OsuGamemodeException, OsuUserException {
+    private synchronized void check(OsuPlayer p, double PP_Required) throws JSONException, IOException, OsuGamemodeException, OsuUserException, InterruptedException {
       if((new Date().getTime() - last_checked) / 1000 >= 2) {
         updateUser();
+
+        //System.out.println("PP_Rank: " + pp_rank + " | Rank_Difference: " + rank_difference);
+
         if(pp_difference > PP_Required) {
           RankChangedEvent event = new RankChangedEvent(p);
           for(OsuListener list : listeners) {
@@ -76,6 +79,9 @@ public class OsuPlayer {
           RankChangedEvent event = new RankChangedEvent(p);
           for(OsuListener list : listeners) {
             list.onPlayerRankChanged(event);
+
+            System.out.println("Success!");
+            Thread.sleep(1000000);
           }
         }
       }
@@ -102,8 +108,10 @@ public class OsuPlayer {
                 ex.printStackTrace();
               } catch (OsuUserException ex) {
                 ex.printStackTrace();
+              } catch (InterruptedException e) {
+                  e.printStackTrace();
               }
-              try {
+                try {
                 Thread.sleep(1000);
               } catch (Exception ex) {
                 ex.printStackTrace();
@@ -157,16 +165,24 @@ public class OsuPlayer {
             count_rank_a = user.getInt("count_rank_a");
             country = user.getString("country");
             pp_country_rank = user.getInt("pp_country_rank");
-            
+
+
             if(pp_difference == 0.0d) 
               pp_difference = pp_raw;
             else 
               pp_difference = pp_raw - pp_difference;
-            
-            if(rank_difference == 0)
-              rank_difference = pp_rank;
-            else
-              rank_difference = pp_rank - rank_difference;
+
+            System.out.println("1 " + rank_difference);
+            System.out.println("2 " + pp_rank);
+            if(rank_difference == 0) {
+                System.out.println("xd");
+                rank_difference = pp_rank;
+                System.out.println("3 " + rank_difference);
+            }
+            else if(pp_rank != rank_difference){
+                rank_difference = pp_rank - rank_difference;
+                System.out.println("4 " + rank_difference);
+            }
             
             profile_url = "https://osu.ppy.sh/u/" + user_id;
             avatar_url = "https://a.ppy.sh/" + user_id;

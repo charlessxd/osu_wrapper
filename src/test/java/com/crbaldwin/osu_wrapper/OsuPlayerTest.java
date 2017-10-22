@@ -13,13 +13,10 @@ import java.text.DecimalFormat;
 public class OsuPlayerTest {
     public static void main(String[] args) throws IOException, OsuUserException, OsuGamemodeException, JSONException, InterruptedException {
         Osu osu = new Osu("319e7d936f399ab7663781d5bf19858fdc04b2a8");
-        OsuPlayer player = osu.getPlayer(1321043, Osu.OsuGameMode.OSU);
+        OsuPlayer player = osu.getPlayer("hexxy22", Osu.OsuGameMode.OSU);
         
         player.addListener(new OsuPlayerListenerTest(), 0.001);
-        Thread.sleep(2000);
-        player.setRaw_PP(200.06);
-        Thread.sleep(2000);
-        player.setRaw_PP(200.05);
+
         //player = osu.getPlayer("charless", Osu.OsuGameMode.OSU);
         //player.addListener(new OsuPlayerListenerTest(), 0.0);
         //System.out.println((new Date().getTime() - player.getChecked())/1000);
