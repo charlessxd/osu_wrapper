@@ -1,12 +1,14 @@
 package com.crbaldwin.osu_wrapper;
 
 import com.crbaldwin.osu_wrapper.events.PPGainedEvent;
+import com.crbaldwin.osu_wrapper.exceptions.OsuBeatmapException;
 import com.crbaldwin.osu_wrapper.exceptions.OsuGamemodeException;
 import com.crbaldwin.osu_wrapper.exceptions.OsuUserException;
 import com.crbaldwin.osu_wrapper.util.API_Request;
 import com.crbaldwin.osu_wrapper.events.OsuListener;
 import com.crbaldwin.osu_wrapper.events.PPGainedEvent;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
 
@@ -29,7 +31,8 @@ public class OsuPlayer {
     private double pp_raw, accuracy, level, pp_difference;
     private long ranked_score, total_score;
     private Osu.OsuGameMode gmode;
-    private List<OsuBeatmap> topPlays = new ArrayList<OsuBeatmap>();    //Add play class that holds OsuBeatmap variables and PP play variables?
+    private Osu osu;
+    private OsuPlay[] top_plays;
     private long last_checked;
     private List<OsuListener> listeners = new ArrayList<OsuListener>();
     private Thread thread;
@@ -48,24 +51,26 @@ public class OsuPlayer {
      *    ? 5 Minutes
      */
 
-    OsuPlayer(String API_KEY, String name, Osu.OsuGameMode gameMode) throws OsuUserException, IOException, OsuGamemodeException, JSONException {
+    OsuPlayer(String name, Osu.OsuGameMode gameMode, Osu osu) throws OsuUserException, IOException, OsuGamemodeException, JSONException, OsuBeatmapException {
         //Setting necessary instance variables to call API in update().
         uname = name;
+        this.osu = osu;
         user_ID = 0;
         gmode = gameMode;
-        key = API_KEY;
+        key = osu.getAPIKey();
         updateUser();
     }
 
-    OsuPlayer(String API_KEY, int userID, Osu.OsuGameMode gameMode) throws OsuUserException, IOException, OsuGamemodeException, JSONException {
+    OsuPlayer(int userID, Osu.OsuGameMode gameMode, Osu osu) throws OsuUserException, IOException, OsuGamemodeException, JSONException, OsuBeatmapException {
         //Setting necessary instance variables to call API in update().
         user_ID = userID;
+        this.osu = osu;
         gmode = gameMode;
-        key = API_KEY;
+        key = osu.getAPIKey();
         updateUser();
     }
 
-    private synchronized void check(OsuPlayer p, double PP_Required) throws JSONException, IOException, OsuGamemodeException, OsuUserException, InterruptedException {
+    private synchronized void check(OsuPlayer p, double PP_Required) throws JSONException, IOException, OsuGamemodeException, OsuUserException, InterruptedException, OsuBeatmapException {
         if ((new Date().getTime() - last_checked) / 1000 >= 2) {
             updateUser();
 
@@ -108,6 +113,8 @@ public class OsuPlayer {
                             ex.printStackTrace();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
+                        } catch (OsuBeatmapException e) {
+                            e.printStackTrace();
                         }
                         try {
                             Thread.sleep(1000);
@@ -124,7 +131,7 @@ public class OsuPlayer {
     /*
         Add error checking for gamemodes
      */
-    private void updateUser() throws IOException, OsuGamemodeException, OsuUserException, JSONException {
+    private void updateUser() throws IOException, OsuGamemodeException, OsuUserException, JSONException, OsuBeatmapException {
         JSONObject user;
         if (gmode == Osu.OsuGameMode.OSU) {
             user = REQUEST.callApiObject(GET_USER + key + "&u=" + (user_ID == 0 ? uname : user_ID) + "&m=0");
@@ -172,7 +179,14 @@ public class OsuPlayer {
             profile_url = "https://osu.ppy.sh/u/" + user_id;
             avatar_url = "https://a.ppy.sh/" + user_id;
 
-            last_checked = new Date().getTime();
+            JSONArray topPlaysJSON = REQUEST.callApiArray(GET_USER_BEST+osu.getAPIKey()+"&u="+user_id);
+            if(topPlaysJSON.length() > 0) {
+                top_plays = new OsuPlay[topPlaysJSON.length()];
+
+                for (int i = 0; i < topPlaysJSON.length(); i++)
+                    top_plays[i] = osu.parseOsuPlay(topPlaysJSON.getJSONObject(i));
+            }
+
         }
     }
 
@@ -265,4 +279,6 @@ public class OsuPlayer {
     public String getAvatarUrl() {
         return avatar_url;
     }
+
+    public OsuPlay[] getTopPlays() { return top_plays; }
 }

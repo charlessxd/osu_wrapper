@@ -24,18 +24,28 @@ public class Osu {
     }
 
     //Default call, returns OsuPlayer for
-    public OsuPlayer getPlayer(String username, OsuGameMode mode) throws IOException, OsuUserException, OsuGamemodeException, JSONException {
-        OsuPlayer player = new OsuPlayer(key, username, mode);
+    public OsuPlayer getPlayer(String username, OsuGameMode mode) throws IOException, OsuUserException, OsuGamemodeException, JSONException, OsuBeatmapException {
+        OsuPlayer player = new OsuPlayer(username, mode, this);
         return player;
     }
 
-    public OsuPlayer getPlayer(int user_id, OsuGameMode mode) throws OsuUserException, IOException, OsuGamemodeException, JSONException {
-        OsuPlayer player = new OsuPlayer(key, user_id, mode);
+    public OsuPlayer getPlayer(int user_id, OsuGameMode mode) throws OsuUserException, IOException, OsuGamemodeException, JSONException, OsuBeatmapException {
+        OsuPlayer player = new OsuPlayer(user_id, mode, this);
         return player;
     }
 
     public OsuBeatmap getBeatmap(int beatmap_id) throws IOException, JSONException, OsuBeatmapException {
-        OsuBeatmap beatmap = new OsuBeatmap(key, beatmap_id);
+        OsuBeatmap beatmap = new OsuBeatmap(beatmap_id, this);
         return beatmap;
     }
+
+    public OsuPlay parseOsuPlay(JSONObject play) throws IOException, OsuBeatmapException {
+        OsuPlay osu_play = new OsuPlay(play, this);
+        return osu_play;
+    }
+
+    public String getAPIKey() {
+        return key;
+    }
+
 }

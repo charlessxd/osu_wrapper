@@ -29,14 +29,16 @@ public class OsuBeatmap {
     private double difficultyrating, diff_size, diff_overall, diff_approach, diff_drain;
     private String artist, creator, source, title, version, key;
     private String[] tags;
+    private Osu osu;
     private Date approved_date, last_update;
     
-    OsuBeatmap(String API_KEY, int beatmap_id) throws IOException, JSONException, OsuBeatmapException {
-        key = API_KEY;
+    OsuBeatmap(int beatmap_id, Osu osu) throws IOException, JSONException, OsuBeatmapException {
+        key = osu.getAPIKey();
+        this.osu = osu;
         this.beatmap_id = beatmap_id;
         updateMap();
     }
-    
+
     private void updateMap() throws IOException, JSONException, OsuBeatmapException {
         JSONObject map = REQUEST.callApiObject(GET_BEATMAPS+key+"&b="+beatmap_id);
 
