@@ -1,5 +1,6 @@
 package com.crbaldwin.osu_wrapper;
 
+import com.crbaldwin.osu_wrapper.exceptions.OsuBeatmapException;
 import com.crbaldwin.osu_wrapper.exceptions.OsuGamemodeException;
 import com.crbaldwin.osu_wrapper.exceptions.OsuUserException;
 import com.crbaldwin.osu_wrapper.util.API_Request;
@@ -31,5 +32,10 @@ public class Osu {
     public OsuPlayer getPlayer(int user_id, OsuGameMode mode) throws OsuUserException, IOException, OsuGamemodeException, JSONException {
         OsuPlayer player = new OsuPlayer(key, user_id, mode);
         return player;
+    }
+
+    public OsuBeatmap getBeatmap(int beatmap_id) throws IOException, JSONException, OsuBeatmapException {
+        OsuBeatmap beatmap = new OsuBeatmap(key, beatmap_id);
+        return beatmap;
     }
 }

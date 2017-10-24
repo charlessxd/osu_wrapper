@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Projects.iml" filepath="$PROJECT_DIR$/Projects.iml" />
       <module fileurl="file://$PROJECT_DIR$/osu_wrapper.iml" filepath="$PROJECT_DIR$/osu_wrapper.iml" />
     </modules>
   </component>

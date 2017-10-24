@@ -1,7 +1,6 @@
 package com.crbaldwin.osu_wrapper.events;
 
-import java.util.*;
-
-public interface OsuListener {
-  void onPlayerRankChanged(RankChangedEvent event);
+public abstract class OsuListener {
+    public void onPPGained(PPGainedEvent event) {
+    }
 }

@@ -1,5 +1,6 @@
 package com.crbaldwin.osu_wrapper.util;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -9,7 +10,7 @@ import java.nio.charset.Charset;
 
 public class API_Request {
 
-    public JSONObject callApi(String url) throws IOException, JSONException {
+    public JSONObject callApiObject(String url) throws IOException, JSONException {
         InputStream is = new URL(url).openStream();
         try {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
@@ -27,7 +28,23 @@ public class API_Request {
         }
     }
 
-    private String readAll(Reader rd) throws IOException {
+    public static JSONArray callApiArray(String url) throws IOException {
+        InputStream is = new URL(url).openStream();
+        try {
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            String jsonText = readAll(rd);
+            if(jsonText.length()>2) {
+                return new JSONArray(jsonText);
+            }
+            else {
+                return null;
+            }
+        } finally {
+            is.close();
+        }
+    }
+
+    private static String readAll(Reader rd) throws IOException {
         StringBuilder sb = new StringBuilder();
         int cp;
         while ((cp = rd.read()) != -1) {
