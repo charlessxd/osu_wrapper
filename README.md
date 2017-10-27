@@ -39,7 +39,7 @@ public class ExampleMain throws IOException, OsuUserException, OsuGamemodeExcept
 ```java
 public class OsuBeatmapTest {
     public static void main(String[] args) throws IOException, OsuUserException, OsuGamemodeException, JSONException, InterruptedException, OsuBeatmapException {
-        Osu osu = new Osu("319e7d936f399ab7663781d5bf19858fdc04b2a8");
+        Osu osu = new Osu("<api-key>");
         OsuBeatmap beatmap = osu.getBeatmap(252002);
         
         System.out.println(beatmap.getArtist());
