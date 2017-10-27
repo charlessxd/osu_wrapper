@@ -4,7 +4,6 @@ Java API Wrapper for Official Osu! API
 https://github.com/ppy/osu-api/wiki
 
 ## TO DO
-
 ### Event Listeners
 1. Add PPLostEvent
 2. Add TopPlayChangedEvent
@@ -12,7 +11,9 @@ https://github.com/ppy/osu-api/wiki
 ### Misc.
 1. Change the API Call method?
 
-## OsuPlayer Usage Example | OsuPlayerTest.java
+
+## Usage Examples
+### OsuPlayer Usage Example | OsuPlayerTest.java
 ```java
 public class OsuPlayerTest {
     public static void main(String[] args) throws IOException, OsuUserException, OsuGamemodeException, JSONException, InterruptedException, OsuBeatmapException {
@@ -23,7 +24,7 @@ public class OsuPlayerTest {
 }
 ```
 
-## OsuPlayerListener Usage Example | OsuPlayerListener.java & ExampleMain
+### OsuPlayerListener Usage Example | OsuPlayerListener.java & ExampleMain
 ```java
 public class OsuPlayerListenerTest extends OsuListener {
     public void onPPGained(PPGainedEvent event) {
@@ -40,7 +41,7 @@ public class ExampleMain throws IOException, OsuUserException, OsuGamemodeExcept
 }
 ```
 
-## OsuBeatmap Usage Example | OsuBeatmapTest.java
+### OsuBeatmap Usage Example | OsuBeatmapTest.java
 ```java
 public class OsuBeatmapTest {
     public static void main(String[] args) throws IOException, OsuUserException, OsuGamemodeException, JSONException, InterruptedException, OsuBeatmapException {
