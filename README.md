@@ -1,11 +1,16 @@
 # osu_wrapper
 Java API Wrapper for Official Osu! API
+
 https://github.com/ppy/osu-api/wiki
 
-##TO DO
-#Event Listeners
+## TO DO
+
+### Event Listeners
 1. Add PPLostEvent
 2. Add TopPlayChangedEvent
+
+### Misc.
+1. Change the API Call method?
 
 ## OsuPlayer Usage Example | OsuPlayerTest.java
 ```java
