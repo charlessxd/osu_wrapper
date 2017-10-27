@@ -23,7 +23,7 @@ public class OsuPlayerListenerTest extends OsuListener {
     }
 }
 
-public class ExampleMain  throws IOException, OsuUserException, OsuGamemodeException, JSONException, InterruptedException, OsuBeatmapException {
+public class ExampleMain throws IOException, OsuUserException, OsuGamemodeException, JSONException, InterruptedException, OsuBeatmapException {
     public static void main(String[] args) {
         Osu osu = new Osu("<api-key>");
         OsuPlayer player = osu.getPlayer("cookiezi", Osu.OsuGameMode.OSU); //Notifies for all gamemodes.
