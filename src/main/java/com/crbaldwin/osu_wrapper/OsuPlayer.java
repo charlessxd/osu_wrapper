@@ -90,6 +90,10 @@ public class OsuPlayer {
         }
     }
 
+    /*
+    Move addListener to Osu class
+    Have Osu keep track off all listeners, have boolean to check if track player
+    */
     public void addListener(OsuListener listener, double PP_Required) {
         listeners.add(listener);
         final OsuPlayer user = this;
