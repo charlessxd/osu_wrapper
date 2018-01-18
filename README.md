@@ -7,6 +7,9 @@ https://github.com/ppy/osu-api/wiki
 ### Event Listeners
 1. Add PPLostEvent
 2. Add TopPlayChangedEvent
+    2a. Return new top play only?
+    2b. Return both new top play and lost top play?
+        2ba. Return in map?
 3. Explain each class and its usage
 
 ### Misc.
