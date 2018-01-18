@@ -7,6 +7,7 @@ https://github.com/ppy/osu-api/wiki
 ### Event Listeners
 1. Add PPLostEvent
 2. Add TopPlayChangedEvent
+3. Explain each class and its usage
 
 ### Misc.
 1. Change the API Call method?
