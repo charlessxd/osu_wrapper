@@ -1,5 +1,5 @@
 # osu_wrapper
-Java API Wrapper for Official Osu! API
+Java API Wrapper for the Official osu! API
 
 https://github.com/ppy/osu-api/wiki
 
