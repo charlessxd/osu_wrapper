@@ -1,6 +1,8 @@
 # osu_wrapper
 Java API Wrapper for the Official osu! API
 
+4/13/2018 Being used for Charles Baldwin's Create Performance Task.
+
 https://github.com/ppy/osu-api/wiki
 
 ## TO DO
